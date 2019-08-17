@@ -125,6 +125,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SensorReader.cs" />
     <Compile Include="Wrapers\CardWrapper.cs" />
+    <Compile Include="Wrapers\HttpSender.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
