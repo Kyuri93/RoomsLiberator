@@ -11,6 +11,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.111" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.111" />
   </ItemGroup>
 
   <ItemGroup>
