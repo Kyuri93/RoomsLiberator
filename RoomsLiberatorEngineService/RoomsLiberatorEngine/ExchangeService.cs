@@ -79,6 +79,12 @@ namespace RoomsLiberatorEngine
             }
         }
 
+        public NameResolution GetOrganizer(Appointment appointment)
+        {
+            var service = InitService();
+            return service.ResolveName(appointment.Organizer.Name).Result.FirstOrDefault();
+        }
+
         private List<Appointment> GetAppointments(ExchangeService service, List<AttendeeInfo> rooms, DateTime from, DateTime to)
         {
             List<Appointment> appointments = new List<Appointment>();
