@@ -19,19 +19,43 @@ namespace RoomsLiberatorEngine
         private void CallOutlook()
         {
             var appointments = _exchangeService.GetAppointments(DateTime.Now.AddMinutes(-15), DateTime.Now);
+
+            var DbContext = new DatabaseContext();
+
+
             foreach (var appointment in appointments)
             {
-                if (appointment.Start >= DateTime.Now.Add(TimeSpan.FromMinutes(-20)))
+                try
                 {
-                    _exchangeService.CancelAppointment(appointment);
+                    var organaizer = _exchangeService.GetOrganizer(appointment);
+
+                    var orqanaizerId = DbContext.Users.FirstOrDefault(x => x.UserMail == organaizer.Mailbox.Address).UserId;
+
+                    var lastBip = DbContext.DeviceStates.FirstOrDefault(x => x.Value == orqanaizerId);
+
+
+                    if (lastBip.Date > appointment.Start.Add((TimeSpan.FromMinutes(-1))))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (appointment.Start <= DateTime.Now.Add(TimeSpan.FromMinutes(-2)))
+                        {
+                            _exchangeService.CancelAppointment(appointment);
+                        }
+                        else if (appointment.Start >= DateTime.Now.Add(TimeSpan.FromMinutes(-1)))
+                        {
+                            _exchangeService.SendWarning(appointment);
+                            //warning
+                        }
+                    }
                 }
-                else if (appointment.Start >= DateTime.Now.Add(TimeSpan.FromMinutes(-5)))
+                catch (Exception e)
                 {
-                    _exchangeService.SendWarning(appointment);
-                    //warning
+                    continue;
                 }
             }
-
         }
 
         OutlookResponse GetMockData()

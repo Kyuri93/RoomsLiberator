@@ -12,9 +12,11 @@ namespace RoomsLiberatorEngine.Controllers
     {
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public DeviceState Get()
         {
-            return new string[] { "value1", "value2" };
+            var DbContext = new DatabaseContext();
+
+            return DbContext.DeviceStates.Last();
         }
 
         // GET api/PushCardID/5
@@ -72,22 +74,6 @@ namespace RoomsLiberatorEngine.Controllers
         //    return "as";
         //}
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
 }
