@@ -39,7 +39,19 @@ namespace RoomsLiberatorEngine
 
         public void SendWarning(Appointment appointment)
         {
+            var service = InitService();
+            var email = new EmailMessage(service);
 
+            var organizer = service.ResolveName(appointment.Organizer.Name).Result.FirstOrDefault();
+
+            if (organizer != null)
+            {
+                email.ToRecipients.Add(organizer.Mailbox.Address);
+            }
+
+            email.Subject = "Appointment auto cancellation reminder";
+            email.Body = new MessageBody($"Click this link to prevent appointment from cancellation {appointment.ICalUid}");
+            email.Send();
         }
 
         public void CancelAppointment(Appointment appointment)
