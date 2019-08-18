@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,7 +19,35 @@ namespace RoomsLiberatorEngine
     {
         public Startup(IConfiguration configuration)
         {
+
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{EnvironmentName.Development}.json", optional: true);
+
+
+            try
+            {
+                using (var db = new DatabaseContext())
+                {
+                  var t =  db.Database.EnsureCreated();
+                    db.Database.Migrate();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
             Configuration = configuration;
+            CoreLogic coreLogic = new CoreLogic();
+            
+
+          coreLogic.Loop();
+          //  var t = new Task(()=>coreLogic.Loop());
+         //   t.Start();
+
+          Debug.WriteLine("loop was started");
         }
 
         public IConfiguration Configuration { get; }
@@ -25,7 +56,7 @@ namespace RoomsLiberatorEngine
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-
+            services.AddEntityFrameworkSqlite().AddDbContext<DatabaseContext>();
 
             services.AddSwaggerGen(c =>
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using RoomsLiberatorEngine.ViewModel;
 
 namespace RoomsLiberatorEngine.Controllers
 {
@@ -13,6 +14,38 @@ namespace RoomsLiberatorEngine.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
+            try
+            {
+                var _myDbContext = new DatabaseContext();
+
+                _myDbContext.Users.Update(new User()
+                {
+                    Id = 1,
+                    UserId = "bbb",
+                    UserMail = "mailbbb"
+
+                });
+
+               // var l = _myDbContext.EventLogs.First();
+               //_myDbContext.Users.Add(new User()
+               // {
+               //     Id = 1,
+               //     UserId = "a",
+               //     UserMail = "mail"
+
+               // });
+                _myDbContext.SaveChanges();
+                return
+                    new string[]
+                        {"a", "b"}; //{ l.DeviceId.ToString(), l.DeviceType.ToString(), l.RoomId.ToString(), l.Value };
+            }
+            catch (Exception e)
+            {
+                return new string[] {e.Message};
+                Console.WriteLine(e);
+                throw;
+            }
+            
             return new string[] { "value1", "value2" };
         }
 
@@ -25,9 +58,14 @@ namespace RoomsLiberatorEngine.Controllers
 
         // GET api/PushMotionSensorState/1
         [HttpGet("{id}")]
-        public string PushMotionSensorState(string value)
+        public string PushMotionSensorState([FromBody] EventLog value)
         {
-            return $"value: {value}";
+            //DatabaseContext context = new DatabaseContext();
+            //context.EventLogs.Add(value);
+            //context.SaveChanges();
+            //var l = context.EventLogs.Last();
+            //return l.Value;
+            return "as";
         }
 
         // POST api/values
