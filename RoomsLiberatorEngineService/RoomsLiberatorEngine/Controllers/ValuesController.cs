@@ -14,59 +14,63 @@ namespace RoomsLiberatorEngine.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            try
-            {
-                var _myDbContext = new DatabaseContext();
-
-                _myDbContext.Users.Update(new User()
-                {
-                    Id = 1,
-                    UserId = "bbb",
-                    UserMail = "mailbbb"
-
-                });
-
-               // var l = _myDbContext.EventLogs.First();
-               //_myDbContext.Users.Add(new User()
-               // {
-               //     Id = 1,
-               //     UserId = "a",
-               //     UserMail = "mail"
-
-               // });
-                _myDbContext.SaveChanges();
-                return
-                    new string[]
-                        {"a", "b"}; //{ l.DeviceId.ToString(), l.DeviceType.ToString(), l.RoomId.ToString(), l.Value };
-            }
-            catch (Exception e)
-            {
-                return new string[] {e.Message};
-                Console.WriteLine(e);
-                throw;
-            }
-            
             return new string[] { "value1", "value2" };
         }
 
         // GET api/PushCardID/5
-        [HttpGet("PushCardID{id}")]
+        [HttpGet("/PushCardID/{id}", Name = "PushCardID")]
+        [Route("PushCardID")]
         public string PushCardID(string id)
         {
+            try
+            {
+                var DbContext = new DatabaseContext();
+
+                if (!string.IsNullOrEmpty(id))
+                {
+                    var eventLog = new EventLog()
+                    {
+                        Date = DateTime.Now,
+                        DeviceId = 1,
+                        Value = id,
+                        RoomId = 1,
+                        DeviceType = 1,
+                    };
+
+                    DbContext.EventLogs.Add(eventLog);
+
+                    DbContext.DeviceStates.Update(new DeviceState()
+                    {
+                        Date = DateTime.Now,
+                        DeviceId = 1,
+                        RoomId = 1,
+                        Value = id,
+                        Id = 1
+                    });
+
+                    DbContext.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+                throw;
+            }
+
             return $"value: {id}";
         }
 
         // GET api/PushMotionSensorState/1
-        [HttpGet("{id}")]
-        public string PushMotionSensorState([FromBody] EventLog value)
-        {
-            //DatabaseContext context = new DatabaseContext();
-            //context.EventLogs.Add(value);
-            //context.SaveChanges();
-            //var l = context.EventLogs.Last();
-            //return l.Value;
-            return "as";
-        }
+        //[HttpGet("{id}")]
+        //public string PushMotionSensorState(string value)
+        //{
+        //    //DatabaseContext context = new DatabaseContext();
+        //    //context.EventLogs.Add(value);
+        //    //context.SaveChanges();
+        //    //var l = context.EventLogs.Last();
+        //    //return l.Value;
+        //    return "as";
+        //}
 
         // POST api/values
         [HttpPost]

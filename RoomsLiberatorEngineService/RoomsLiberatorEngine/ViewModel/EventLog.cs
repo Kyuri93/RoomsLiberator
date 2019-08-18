@@ -12,6 +12,6 @@ namespace RoomsLiberatorEngine
         public int RoomId { get; set; }
         public int DeviceType { get; set; }
         public string Value { get; set; }
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
     }
 }
