@@ -8,6 +8,8 @@ namespace RoomsLiberatorEngine
 {
     public class CoreLogic
     {
+        private ExchangeServiceWrapper _exchangeService = new ExchangeServiceWrapper();
+
         public void Loop()
         {
             var timer = new System.Threading.Timer((e) => { CallOutlook(); }, null, TimeSpan.Zero,
@@ -16,12 +18,20 @@ namespace RoomsLiberatorEngine
 
         private void CallOutlook()
         {
-            var data = GetMockData();
-
-            if (data.Time >= DateTime.Now.Add(TimeSpan.FromMinutes(-5)))
+            var appointments = _exchangeService.GetAppointments(DateTime.Now.AddMinutes(-15), DateTime.Now);
+            foreach (var appointment in appointments)
             {
-                Debug.WriteLine(data.MaiList.First());
+                if (appointment.Start >= DateTime.Now.Add(TimeSpan.FromMinutes(-20)))
+                {
+                    _exchangeService.CancelAppointment(appointment);
+                }
+                else if (appointment.Start >= DateTime.Now.Add(TimeSpan.FromMinutes(-5)))
+                {
+                    _exchangeService.SendWarning(appointment);
+                    //warning
+                }
             }
+
         }
 
         OutlookResponse GetMockData()
